@@ -210,7 +210,7 @@
     </div>
 
     <script type="module">
-        import { getProjects, createProject as dbCreateProject, deleteProject as dbDeleteProject, isFirebaseConfigured } from './js/project-service.js';
+        import { getProjects, createProject as dbCreateProject, deleteProject as dbDeleteProject, isFirebaseConfigured, seedDatabase } from './js/project-service.js';
 
         // Expose functions to window for HTML attributes
         window.openCreateModal = openCreateModal;
@@ -220,6 +220,14 @@
         window.createProject = createProject;
         window.showNotification = showNotification;
         window.logout = logout;
+        
+        // For debugging/setup: expose seedDatabase to console
+        window.seedDatabase = async () => {
+            if(confirm('This will upload all projects from data/projects.json to your Firebase database. Continue?')) {
+                await seedDatabase();
+                fetchProjects(); // Refresh the table
+            }
+        };
 
         let projects = [];
         const API_URL = 'data/projects.json';

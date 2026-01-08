@@ -5,7 +5,8 @@ const COLLECTION_NAME = 'projects';
 const LOCAL_STORAGE_KEY = 'demo_projects';
 
 export function isFirebaseConfigured() {
-    return firebaseConfig.apiKey !== "AIzaSyBtY_74ZZWTCd5wKmt39nIUC00kvv13Ta8";
+    // Check if the apiKey is not the default placeholder
+    return firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.apiKey !== "";
 }
 
 // Helper to get local demo data
@@ -81,7 +82,12 @@ export async function createProject(projectData) {
         };
     } catch (e) {
         console.error("Error adding document: ", e);
-        alert("Error saving to database: " + e.message);
+        
+        if (e.code === 'permission-denied') {
+             alert("Error: Permission Denied.\n\nIt looks like your Firestore Database rules are blocking writes.\n\nPlease go to Firebase Console > Firestore Database > Rules and allow read/write access (or switch to Test Mode).");
+        } else {
+             alert("Error saving to database: " + e.message);
+        }
         throw e;
     }
 }
@@ -104,5 +110,36 @@ export async function deleteProject(id) {
         console.error("Error removing document: ", e);
         alert("Error deleting: " + e.message);
         throw e;
+    }
+}
+
+// 4. SEED: Upload local JSON data to Firebase (Run this once)
+export async function seedDatabase() {
+    try {
+        // 1. Fetch the JSON file
+        const response = await fetch('data/projects.json');
+        const projects = await response.json();
+        
+        console.log(`Found ${projects.length} projects to upload...`);
+        
+        // 2. Upload each project
+        let count = 0;
+        for (const project of projects) {
+            // Remove the ID (let Firebase generate a new one)
+            const { id, ...projectData } = project;
+            
+            await addDoc(collection(db, COLLECTION_NAME), {
+                ...projectData,
+                createdAt: Timestamp.now()
+            });
+            count++;
+            console.log(`Uploaded: ${project.title}`);
+        }
+        
+        alert(`Successfully uploaded ${count} projects to Firebase!`);
+        return true;
+    } catch (error) {
+        console.error("Error seeding database:", error);
+        alert("Error uploading data: " + error.message);
     }
 }
