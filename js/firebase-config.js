@@ -3,14 +3,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
-// TODO: Replace with your actual Firebase project configuration from the Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBtY_74ZZWTCd5wKmt39nIUC00kvv13Ta8",
+  authDomain: "prabath-66487.firebaseapp.com",
+  projectId: "prabath-66487",
+  storageBucket: "prabath-66487.firebasestorage.app",
+  messagingSenderId: "323049415882",
+  appId: "1:323049415882:web:8fa7418eda7d77d81d4033",
+  measurementId: "G-MR2627CF95"
 };
 
 // Initialize Firebase

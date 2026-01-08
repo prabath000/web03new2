@@ -5,7 +5,7 @@ const COLLECTION_NAME = 'projects';
 const LOCAL_STORAGE_KEY = 'demo_projects';
 
 export function isFirebaseConfigured() {
-    return firebaseConfig.apiKey !== "YOUR_API_KEY";
+    return firebaseConfig.apiKey !== "AIzaSyBtY_74ZZWTCd5wKmt39nIUC00kvv13Ta8";
 }
 
 // Helper to get local demo data
@@ -68,12 +68,17 @@ export async function createProject(projectData) {
     }
 
     try {
+        const now = Timestamp.now();
         const docRef = await addDoc(collection(db, COLLECTION_NAME), {
             ...projectData,
-            createdAt: Timestamp.now()
+            createdAt: now
         });
         console.log("Document written with ID: ", docRef.id);
-        return { id: docRef.id, ...projectData };
+        return { 
+            id: docRef.id, 
+            ...projectData,
+            createdAt: now.toDate().toISOString()
+        };
     } catch (e) {
         console.error("Error adding document: ", e);
         alert("Error saving to database: " + e.message);
