@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing Project API</h1>
+    <button onclick="testAPI()">Test GET /projects</button>
+    <div id="result"></div>
+
+    <script>
+        function testAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Loading...';
+            
+            fetch('/projects')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Response text:', text);
+                    result.innerHTML = '<pre>' + text + '</pre>';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    result.innerHTML = 'Error: ' + error.message;
+                });
+        }
+    </script>
+</body>
+</html>
