@@ -37,7 +37,8 @@ export async function createProject(projectData) {
     const newProject = {
         id: 'demo-' + Date.now(),
         ...projectData,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
     };
     projects.unshift(newProject);
     saveLocalDemoData(projects);
@@ -73,4 +74,27 @@ export async function seedDatabase() {
 // Always return false since we're using demo mode
 export function isFirebaseConfigured() {
     return false;
+}
+
+// Fetch GitHub repository's last updated date
+export async function getGithubLastUpdated(githubUrl) {
+    if (!githubUrl) return null;
+    
+    try {
+        // Extract owner and repo from URL
+        const urlParts = githubUrl.replace('https://github.com/', '').replace('.git', '').split('/');
+        if (urlParts.length < 2) return null;
+        
+        const owner = urlParts[0];
+        const repo = urlParts[1];
+        
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+        if (!response.ok) return null;
+        
+        const data = await response.json();
+        return data.updated_at;
+    } catch (error) {
+        console.error('Error fetching GitHub data:', error);
+        return null;
+    }
 }

@@ -76,6 +76,7 @@
                                 <th data-key="image">Icon</th>
                                 <th data-key="title">Name</th>
                                 <th data-key="status">Status</th>
+                                <th data-key="lastUpdated">Last Updated</th>
                                 <th data-key="description">Description</th>
                                 <th>Actions</th>
                             </tr>
@@ -185,7 +186,7 @@
     </div>
 
     <script type="module">
-        import { getProjects, createProject as dbCreateProject, deleteProject as dbDeleteProject, isFirebaseConfigured, seedDatabase } from './js/project-service.js';
+        import { getProjects, createProject as dbCreateProject, deleteProject as dbDeleteProject, isFirebaseConfigured, seedDatabase, getGithubLastUpdated } from './js/project-service.js';
 
         // Expose functions to window for HTML attributes
         window.openCreateModal = openCreateModal;
@@ -233,16 +234,27 @@
 
         async function fetchProjects() {
             // Show loading state
-            document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Loading projects...</td></tr>';
+            document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Loading projects...</td></tr>';
             
             try {
                 projects = await getProjects();
                 console.log('Projects loaded:', projects);
+                
+                // Fetch GitHub last updated date for each project
+                for (let project of projects) {
+                    if (project.githubUrl) {
+                        const githubDate = await getGithubLastUpdated(project.githubUrl);
+                        if (githubDate) {
+                            project.lastUpdated = githubDate;
+                        }
+                    }
+                }
+                
                 renderProjects();
                 updateStats();
             } catch (error) {
                 console.error('Error fetching projects:', error);
-                document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #dc3545;">Error loading projects: ' + error.message + '</td></tr>';
+                document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #dc3545;">Error loading projects: ' + error.message + '</td></tr>';
             }
         }
         function renderProjects() {
@@ -408,18 +420,20 @@
             console.log('Rendering', items.length, 'items, pageItems:', pageItems);
             
             if (items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #888;">No projects found. Create your first project to get started!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #888;">No projects found. Create your first project to get started!</td></tr>';
             } else {
                 tbody.innerHTML = pageItems.map(function(p){
                     const imgs = [p.image, p.image2, p.image3, p.image4, p.image5].filter(function(u){ return !!u; });
                     const thumbs = imgs.length ? imgs.map(function(u){
                         return '<img src="' + u + '" alt="" style="width:40px;height:40px;object-fit:cover;margin-right:6px;border-radius:6px;" onerror="this.src=\'https://via.placeholder.com/40x40?text=P\'">';
                     }).join('') : '<img src="https://via.placeholder.com/40x40?text=P" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px;">';
+                    const lastUpdated = p.lastUpdated ? new Date(p.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
                     return `
                     <tr>
                         <td>${thumbs}</td>
                         <td>${p.title || ''}</td>
                         <td class="project-status status-${p.status}"><span class="status-dot"></span> ${formatStatus(p.status)}</td>
+                        <td>${lastUpdated}</td>
                         <td>${p.description || ''}</td>
                         <td><button class="action-btn delete-btn" onclick="deleteProject('${p.id}')"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
