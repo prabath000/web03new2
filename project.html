@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - My Projects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                Dashboard
+            </div>
+
+            <div class="menu-label">Menu</div>
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <a href="/" class="menu-link">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/project" class="menu-link active">
+                        <i class="fa-solid fa-layer-group"></i>
+                        My project
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" onclick="showNotification('Settings page coming soon!')">
+                        <i class="fa-solid fa-gear"></i>
+                        Settings
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" onclick="showNotification('FAQ page coming soon!')">
+                        <i class="fa-regular fa-circle-question"></i>
+                        F.A.Q.
+                    </a>
+                </li>
+            </ul>
+
+            <div class="menu-label">Latest Project</div>
+            <ul class="latest-project-list" id="latest-project-list">
+                <!-- Dynamically populated -->
+            </ul>
+
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Parbath+Thilina&background=ccc" alt="User" class="user-avatar">
+                <div class="user-info">
+                    <div class="user-name">Parbath Thilina</div>
+                </div>
+                <div class="logout-btn" onclick="logout()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="projects-section">
+                <div class="breadcrumb">Prabath ></div>
+                <h1 class="page-title">My projects</h1>
+
+                <div id="projects-grid">
+                    <div class="table-tools">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search projects">
+                        <button class="btn btn-primary" onclick="openCreateModal()"><i class="fa-solid fa-plus"></i> New Project</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th data-key="image">Icon</th>
+                                <th data-key="title">Name</th>
+                                <th data-key="status">Status</th>
+                                <th data-key="description">Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectsTbody"></tbody>
+                    </table>
+                    <div class="datatable-pagination">
+                        <button class="page-btn" id="prevPage">Prev</button>
+                        <span id="pageInfo"></span>
+                        <button class="page-btn" id="nextPage">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <aside class="right-sidebar">
+                <div class="notifications-section">
+                    <h3 class="section-header">Notifications</h3>
+                    
+                    <div class="notification-item">
+                        <div class="notif-title">
+                            Verification completed <span class="status-uploaded"><span class="status-dot"></span></span>
+                        </div>
+                        <div class="notif-desc">
+                            Your game «Gold fever» successfully passed the test. Now it is available in dashboards.
+                        </div>
+                    </div>
+
+                    <div class="notification-item active">
+                        <i class="fa-solid fa-xmark close-btn"></i>
+                        <div class="notif-title">
+                            Last week's statistics <span class="status-uploaded"><span class="status-dot"></span></span>
+                        </div>
+                        <div class="notif-desc">
+                            Take a look at the dashboards :) Your game earned a lot of coins last week
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statistics-section">
+                    <h3 class="section-header">Project statistics</h3>
+                    
+                    <div class="stat-item">
+                        <div class="stat-info">Completed projects</div>
+                        <div class="stat-circle c-25" id="stat-completed"><span>0</span></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-info">On verifications</div>
+                        <div class="stat-circle c-25" id="stat-verification"><span>0</span></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-info">In progress</div>
+                        <div class="stat-circle c-50" id="stat-progress"><span>0</span></div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    
+
+    <!-- Create Project Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">New Project</div>
+                <div class="modal-close" onclick="closeCreateModal()"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+            <form id="createProjectForm" onsubmit="createProject(event)">
+                <div class="form-group">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="pTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="pDesc" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control" id="pStatus">
+                        <option value="uploaded">Uploaded</option>
+                        <option value="verification">On Verification</option>
+                        <option value="progress">In Progress</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GitHub Link</label>
+                    <input type="url" class="form-control" id="pGithubUrl" placeholder="https://github.com/username/repo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Images (up to 5)</label>
+                    <div class="file-upload" onclick="document.getElementById('pImages').click()">
+                        <input type="file" id="pImages" accept="image/*" multiple onchange="handleImagePreview(this)">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <div style="margin-top: 5px; font-size: 0.8rem; color: #888;">Click to upload up to 5 images</div>
+                    </div>
+                    <div id="imagePreviewGrid" class="file-preview-grid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getProjects, createProject as dbCreateProject, deleteProject as dbDeleteProject, isFirebaseConfigured, seedDatabase } from './js/project-service.js';
+
+        // Expose functions to window for HTML attributes
+        window.openCreateModal = openCreateModal;
+        window.closeCreateModal = closeCreateModal;
+        window.handleImagePreview = handleImagePreview;
+        window.deleteProject = deleteProject;
+        window.createProject = createProject;
+        window.showNotification = showNotification;
+        window.logout = logout;
+        
+        // For debugging/setup: expose seedDatabase to console
+        window.seedDatabase = async () => {
+            if(confirm('This will load all projects from data/projects.json to your browser storage. Continue?')) {
+                await seedDatabase();
+                fetchProjects(); // Refresh the table
+            }
+        };
+
+        let projects = [];
+        let page = 1;
+        let pageSize = 10;
+        let sortKey = 'title';
+        let sortAsc = true;
+        let searchTerm = '';
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            bindTableEvents();
+            fetchProjects();
+        });
+        
+        // Fallback initialization in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded (fallback), initializing...');
+                bindTableEvents();
+                fetchProjects();
+            });
+        } else {
+            console.log('DOM already loaded, initializing immediately...');
+            bindTableEvents();
+            fetchProjects();
+        }
+
+        async function fetchProjects() {
+            // Show loading state
+            document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Loading projects...</td></tr>';
+            
+            try {
+                projects = await getProjects();
+                console.log('Projects loaded:', projects);
+                renderProjects();
+                updateStats();
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+                document.getElementById('projectsTbody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #dc3545;">Error loading projects: ' + error.message + '</td></tr>';
+            }
+        }
+        function renderProjects() {
+            updateTable();
+            renderLatestProjects();
+        }
+        function renderLatestProjects() {
+            const list = document.getElementById('latest-project-list');
+            list.innerHTML = projects.slice(0, 3).map(function(p){
+                return `
+                <li class="latest-project-item">
+                    <i class="fa-regular fa-folder"></i> ${p.title}
+                </li>`;
+            }).join('');
+        }
+        function updateStats() {
+            const stats = { uploaded: 0, verification: 0, progress: 0 };
+            projects.forEach(function(p){
+                if(stats[p.status] !== undefined) stats[p.status]++;
+            });
+            document.querySelector('#stat-completed span').textContent = stats.uploaded;
+            document.querySelector('#stat-verification span').textContent = stats.verification;
+            document.querySelector('#stat-progress span').textContent = stats.progress;
+        }
+        function formatStatus(status) {
+            const map = { uploaded: 'Uploaded', verification: 'On Verification', progress: 'In Progress' };
+            return map[status] || status;
+        }
+        async function deleteProject(id) {
+            if(confirm('Are you sure you want to delete this project?')) {
+                try {
+                    await dbDeleteProject(id.toString());
+                    fetchProjects();
+                    alert("Project deleted from local storage.");
+                } catch (err) {
+                    console.error('Error deleting project:', err);
+                    alert('Error deleting project. Please try again.');
+                }
+            }
+        }
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('active');
+        }
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('createProjectForm').reset();
+            const grid = document.getElementById('imagePreviewGrid');
+            if (grid) grid.innerHTML = '';
+        }
+        function handleImagePreview(input) {
+            const grid = document.getElementById('imagePreviewGrid');
+            grid.innerHTML = '';
+            if (input.files && input.files.length) {
+                const files = Array.from(input.files).slice(0, 5);
+                files.forEach(function(file){
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'file-preview';
+                        grid.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+        function createProject(e) {
+            e.preventDefault();
+            const title = document.getElementById('pTitle').value;
+            const desc = document.getElementById('pDesc').value;
+            const status = document.getElementById('pStatus').value;
+            const githubUrl = document.getElementById('pGithubUrl').value;
+            const fileInput = document.getElementById('pImages');
+            
+            const files = (fileInput.files && fileInput.files.length) ? Array.from(fileInput.files).slice(0, 5) : [];
+            Promise.all(files.map(function(file){
+                return new Promise(function(resolve){
+                    const reader = new FileReader();
+                    reader.onload = function(e){ resolve(e.target.result); };
+                    reader.readAsDataURL(file);
+                });
+            })).then(function(images){
+                const image = images[0] || '';
+                const image2 = images[1] || '';
+                const image3 = images[2] || '';
+                const image4 = images[3] || '';
+                const image5 = images[4] || '';
+                submitProject(title, desc, status, { image, image2, image3, image4, image5, githubUrl });
+            });
+        }
+        async function submitProject(title, description, status, payload) {
+            const project = { 
+                title, 
+                description, 
+                status, 
+                image: payload.image, 
+                image2: payload.image2, 
+                image3: payload.image3, 
+                image4: payload.image4, 
+                image5: payload.image5, 
+                githubUrl: payload.githubUrl 
+            };
+            
+            try {
+                await dbCreateProject(project);
+                closeCreateModal();
+                fetchProjects();
+                alert("Project saved to local storage!");
+            } catch (err) {
+                console.error(err);
+                alert('Error creating project');
+            }
+        }
+        function bindTableEvents() {
+            const searchInput = document.getElementById('searchInput');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            searchInput.oninput = function(e) {
+                searchTerm = e.target.value.toLowerCase();
+                page = 1;
+                updateTable();
+            };
+            document.querySelectorAll('.data-table th[data-key]').forEach(function(th){
+                th.onclick = function(){
+                    const key = th.getAttribute('data-key');
+                    if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = true; }
+                    updateTable();
+                };
+            });
+            prevBtn.onclick = function(){
+                if (page > 1) { page--; updateTable(); }
+            };
+            nextBtn.onclick = function(){
+                const total = Math.max(1, Math.ceil(getFiltered().length / pageSize));
+                if (page < total) { page++; updateTable(); }
+            };
+        }
+        function getFiltered() {
+            return projects.filter(function(p){
+                const t = (p.title || '').toLowerCase();
+                const d = (p.description || '').toLowerCase();
+                const s = (p.status || '').toLowerCase();
+                return t.includes(searchTerm) || d.includes(searchTerm) || s.includes(searchTerm);
+            });
+        }
+        function updateTable() {
+            console.log('updateTable called, projects:', projects);
+            let items = getFiltered();
+            console.log('Filtered items:', items);
+            items.sort(function(a,b){
+                const ak = (a[sortKey] || '').toString().toLowerCase();
+                const bk = (b[sortKey] || '').toString().toLowerCase();
+                if (ak < bk) return sortAsc ? -1 : 1;
+                if (ak > bk) return sortAsc ? 1 : -1;
+                return 0;
+            });
+            const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+            if (page > totalPages) page = totalPages;
+            const start = (page - 1) * pageSize;
+            const pageItems = items.slice(start, start + pageSize);
+            const tbody = document.getElementById('projectsTbody');
+            
+            console.log('Rendering', items.length, 'items, pageItems:', pageItems);
+            
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #888;">No projects found. Create your first project to get started!</td></tr>';
+            } else {
+                tbody.innerHTML = pageItems.map(function(p){
+                    const imgs = [p.image, p.image2, p.image3, p.image4, p.image5].filter(function(u){ return !!u; });
+                    const thumbs = imgs.length ? imgs.map(function(u){
+                        return '<img src="' + u + '" alt="" style="width:40px;height:40px;object-fit:cover;margin-right:6px;border-radius:6px;" onerror="this.src=\'https://via.placeholder.com/40x40?text=P\'">';
+                    }).join('') : '<img src="https://via.placeholder.com/40x40?text=P" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px;">';
+                    return `
+                    <tr>
+                        <td>${thumbs}</td>
+                        <td>${p.title || ''}</td>
+                        <td class="project-status status-${p.status}"><span class="status-dot"></span> ${formatStatus(p.status)}</td>
+                        <td>${p.description || ''}</td>
+                        <td><button class="action-btn delete-btn" onclick="deleteProject('${p.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>`;
+                }).join('');
+            }
+            
+            const pageInfo = document.getElementById('pageInfo');
+            pageInfo.textContent = items.length > 0 ? ('Page ' + page + ' of ' + totalPages) : '';
+        }
+        function showNotification(message) {
+            alert(message);
+        }
+        function logout() {
+            if(confirm('Are you sure you want to logout?')) {
+                // In a real app, you would clear session/auth tokens here
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

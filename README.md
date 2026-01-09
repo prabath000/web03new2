@@ -1,39 +1,80 @@
 # Portfolio Website
 
-A simple static portfolio website with local storage for project management.
+A portfolio website with a Node.js backend and MongoDB database.
 
-## Features
+## Deploy to GitHub
 
-- Responsive portfolio design
-- Project management with local storage (no database required)
-- Dark/Light mode toggle
-- Contact form (demo mode)
+1. Create a new repository on GitHub
+2. Push your code:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+   git push -u origin main
+   ```
 
-## Getting Started
+## Deploy to Vercel (Recommended for Full Stack)
 
-Open `index.html` in your browser to view the website.
+Vercel can deploy both frontend and backend:
 
-## Project Management
+1. Push to GitHub first
+2. Go to [vercel.com](https://vercel.com) and sign in with GitHub
+3. Click "Add New Project" and select your repository
+4. Add environment variable: `MONGODB_URI` = your MongoDB Atlas connection string
+5. Click "Deploy"
 
-- Visit `project.html` to manage your projects
-- Add new projects with the "New Project" button
-- Projects are saved to your browser's local storage
-- Data persists across browser sessions
+**Note**: Vercel serverless functions have limits - for production, consider Render or Railway.
 
-## Deployment
+## Deploy Backend to Render
 
-### GitHub Pages
+1. Push to GitHub
+2. Create account at [render.com](https://render.com)
+3. Create a new "Web Service":
+   - Connect your GitHub repository
+   - Build command: `npm install`
+   - Start command: `cd server && npm start`
+4. Add environment variable: `MONGODB_URI` = your MongoDB Atlas connection string
+5. Create service
 
-1. Push your code to a GitHub repository
-2. Go to Settings > Pages
-3. Select "main" branch and save
-4. Your site will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO/`
+## Deploy Frontend to GitHub Pages (Static Only)
 
-## File Structure
+GitHub Pages only hosts static files (no Node.js backend):
 
-- `index.html` - Main portfolio page
-- `project.html` - Project management dashboard
-- `css/` - Stylesheets
-- `js/` - JavaScript files
-- `images/` - Images and assets
-- `data/projects.json` - Default projects data
+1. Go to repository Settings > Pages
+2. Select source: "main" branch
+3. Save
+
+**Note**: The "Add Project" button will only work in Demo Mode (localStorage) on GitHub Pages. For full functionality, use Vercel or Render.
+
+## MongoDB Atlas Setup
+
+1. Create free account at [cloud.mongodb.com](https://cloud.mongodb.com)
+2. Create a free cluster
+3. Create database user with password
+4. Add IP to allowlist (use `0.0.0.0/0` for any IP)
+5. Get connection string and add to `server/.env`
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+cd server && npm install
+
+# Start development server
+npm run dev
+
+# Or start production server
+cd server && npm start
+```
+
+## API Endpoints
+
+- `GET /api/projects` - Get all projects
+- `POST /api/projects` - Create a new project
+- `DELETE /api/projects/:id` - Delete a project
+
+## Demo Mode
+
+If the backend is not running, the site falls back to Demo Mode using browser's local storage.
