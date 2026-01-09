@@ -1,46 +1,39 @@
 # Portfolio Website
 
-This is a static portfolio website converted from a Java Spring Boot application.
+A simple static portfolio website with local storage for project management.
 
-## Hosting on GitHub Pages
+## Features
 
-To host this on GitHub Pages:
+- Responsive portfolio design
+- Project management with local storage (no database required)
+- Dark/Light mode toggle
+- Contact form (demo mode)
 
-1.  Push this code to a GitHub repository.
-2.  Go to the repository **Settings** -> **Pages**.
-3.  Under **Build and deployment**, select **Source** as `Deploy from a branch`.
-4.  Select the `main` (or `master`) branch and `/` (root) folder.
-5.  Click **Save**.
+## Getting Started
 
-Your site will be live at `https://<your-username>.github.io/<repo-name>/`.
+Open `index.html` in your browser to view the website.
 
-## Local Development
+## Project Management
 
-You can view the site locally by simply opening `index.html` in your web browser.
+- Visit `project.html` to manage your projects
+- Add new projects with the "New Project" button
+- Projects are saved to your browser's local storage
+- Data persists across browser sessions
 
-Alternatively, if you have Node.js installed, you can run a local server:
+## Deployment
 
-```bash
-npx serve .
-```
+### GitHub Pages
 
-## Project Structure
+1. Push your code to a GitHub repository
+2. Go to Settings > Pages
+3. Select "main" branch and save
+4. Your site will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO/`
 
--   `index.html`: The main entry point.
--   `data/projects.json`: Contains the list of projects displayed on the site.
--   `css/`, `js/`, `images/`: Static assets.
+## File Structure
 
-## Database Setup (Optional)
-
-This project uses **Firebase Firestore** for saving data.
-
-1.  Create a project at [Firebase Console](https://console.firebase.google.com/).
-2.  Create a **Firestore Database** in test mode.
-3.  Copy your web app configuration keys.
-4.  Open `js/firebase-config.js` and paste your keys.
-
-### Demo Mode
-If you don't set up Firebase, the site runs in **Demo Mode**.
--   Projects you create are saved to your **browser's local storage**.
--   They will persist on your device but won't be visible to others.
--   To share data with others, you must set up Firebase.
+- `index.html` - Main portfolio page
+- `project.html` - Project management dashboard
+- `css/` - Stylesheets
+- `js/` - JavaScript files
+- `images/` - Images and assets
+- `data/projects.json` - Default projects data

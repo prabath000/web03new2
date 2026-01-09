@@ -1,34 +1,14 @@
 [
   {
     "id": 1,
-    "title": "Portfolio Website",
-    "description": "A responsive personal portfolio website built with HTML, CSS, and JavaScript.",
+    "title": "CarGo",
+    "description": "A modern car rental web application that allows users to browse, compare, and book rental cars online. Features include real-time availability, easy booking management, and a user-friendly interface.",
     "status": "uploaded",
-    "image": "https://placehold.co/600x400?text=Portfolio",
-    "image2": "https://placehold.co/600x400?text=Portfolio"
-  },
-  {
-    "id": 2,
-    "title": "E-commerce Platform",
-    "description": "A full-stack e-commerce solution with React frontend and Spring Boot backend.",
-    "status": "progress",
-    "image": "https://placehold.co/600x400?text=E-commerce",
-    "image2": "https://placehold.co/600x400?text=E-commerce"
-  },
-  {
-    "id": 3,
-    "title": "Task Management App",
-    "description": "A collaborative task management application with real-time updates.",
-    "status": "verification",
-    "image": "https://placehold.co/600x400?text=Task+App",
-    "image2": "https://placehold.co/600x400?text=Task+App"
-  },
-  {
-    "id": 4,
-    "title": "Weather Dashboard",
-    "description": "A comprehensive weather application with multiple APIs.",
-    "status": "uploaded",
-    "image": "https://placehold.co/600x400?text=Weather",
-    "image2": "https://placehold.co/600x400?text=Weather"
+    "githubUrl": "https://github.com/IT24100456Thilina/CarRentWeb_new.git",
+    "image": "images/GarGO/Screenshot 2025-12-23 150023.png",
+    "image2": "images/GarGO/Screenshot 2025-12-23 150046.png",
+    "image3": "images/GarGO/Screenshot 2025-12-23 150103.png",
+    "image4": "images/GarGO/Screenshot 2025-12-23 150120.png",
+    "image5": "images/GarGO/Screenshot 2025-12-23 150139.png"
   }
 ]
