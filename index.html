@@ -267,7 +267,7 @@
                         <h3 class="h2">Contact Us</h3>
                         <p>We will get back to you in 24 hours</p>
                         
-                        <form name="contactForm" id="contactForm" method="post" action="/Contact">
+                        <form name="contactForm" id="contactForm" method="post">
                             <fieldset>
                                 <div class="form-field">
                                     <input name="firstName" type="text" id="firstName" class="full-width" placeholder="First Name" value="">
@@ -547,19 +547,61 @@
             // Handle contact form submission for static site
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
+                contactForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
-                    // Get form data
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
+                    
                     const formData = new FormData(contactForm);
                     const data = Object.fromEntries(formData.entries());
                     
-                    console.log('Form submitted with data:', data);
+                    // Try to detect server URL
+                    const getApiUrl = () => {
+                        // Check if we're on localhost
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            return `http://localhost:5000/api/contacts`;
+                        }
+                        return '/api/contacts';
+                    };
                     
-                    // Show success message
-                    alert('Thank you for your message! \n\n(Note: This is a static site demo. Your message was not actually sent to a server, but the form submission was intercepted successfully.)');
-                    
-                    contactForm.reset();
+                    try {
+                        const apiUrl = getApiUrl();
+                        console.log('Submitting form to:', apiUrl);
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        const result = await response.json();
+                        console.log('Server response:', result);
+                        
+                        if (result.success) {
+                            alert('Thank you for your message! We will get back to you soon.');
+                            contactForm.reset();
+                        } else {
+                            alert('Error: ' + (result.message || 'Unknown error'));
+                        }
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                        
+                        // Provide more helpful error message
+                        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                        if (isLocalhost) {
+                            alert('Cannot connect to server. Make sure the server is running on port 5000.\n\nTo start the server:\n1. Open a terminal in the server folder\n2. Run: npm start\n\nThen refresh this page and try again.');
+                        } else {
+                            alert('Failed to submit form. Please try again later or contact us directly at prathilina00000@gmail.com');
+                        }
+                    } finally {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
                 });
             }
         });

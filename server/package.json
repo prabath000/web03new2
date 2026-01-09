@@ -1,7 +1,7 @@
 {
   "name": "web03-backend",
   "version": "1.0.0",
-  "description": "Backend API server for web03 portfolio with MongoDB",
+  "description": "Backend API server for web03 portfolio with local JSON storage",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^8.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "googleapis": "^130.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
   },
-  "keywords": ["portfolio", "api", "mongodb", "express"],
+  "keywords": ["portfolio", "api", "json", "express"],
   "author": "Prabath",
   "license": "ISC"
 }

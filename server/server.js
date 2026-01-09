@@ -3,14 +3,11 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-const connectDB = require('./database');
-const projectRoutes = require('../routes/projects');
+const projectRoutes = require('./routes/projects');
+const contactRoutes = require('./routes/contacts');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB
-connectDB();
 
 // Middleware
 app.use(cors());
@@ -19,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use('/api/projects', projectRoutes);
+app.use('/api/contacts', contactRoutes);
 
 // Serve static files from the parent directory (frontend)
 app.use(express.static(path.join(__dirname, '..')));

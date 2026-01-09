@@ -6,8 +6,6 @@ const connectDB = async () => {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/web03-portfolio';
 
     const conn = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverApi: {
         version: '1',
         strict: true,
