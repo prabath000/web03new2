@@ -1,12 +1,28 @@
 {
   "name": "web03-portfolio",
   "version": "1.0.0",
-  "description": "Static portfolio website converted from Java Spring Boot",
+  "description": "Portfolio website with Node.js backend and MongoDB",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve ."
+    "start": "node server/server.js",
+    "dev": "concurrently \"npm run dev-server\" \"npm run serve-frontend\"",
+    "dev-server": "cd server && npm run dev",
+    "serve-frontend": "npx serve .",
+    "install-server": "cd server && npm install",
+    "build": "echo 'No build step required for static site'"
   },
-  "keywords": [],
+  "keywords": [
+    "portfolio",
+    "mongodb",
+    "express",
+    "nodejs"
+  ],
   "author": "Prabath",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "mongodb": "^7.0.0"
+  }
 }

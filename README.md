@@ -1,46 +1,80 @@
 # Portfolio Website
 
-This is a static portfolio website converted from a Java Spring Boot application.
+A portfolio website with a Node.js backend and MongoDB database.
 
-## Hosting on GitHub Pages
+## Deploy to GitHub
 
-To host this on GitHub Pages:
+1. Create a new repository on GitHub
+2. Push your code:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+   git push -u origin main
+   ```
 
-1.  Push this code to a GitHub repository.
-2.  Go to the repository **Settings** -> **Pages**.
-3.  Under **Build and deployment**, select **Source** as `Deploy from a branch`.
-4.  Select the `main` (or `master`) branch and `/` (root) folder.
-5.  Click **Save**.
+## Deploy to Vercel (Recommended for Full Stack)
 
-Your site will be live at `https://<your-username>.github.io/<repo-name>/`.
+Vercel can deploy both frontend and backend:
+
+1. Push to GitHub first
+2. Go to [vercel.com](https://vercel.com) and sign in with GitHub
+3. Click "Add New Project" and select your repository
+4. Add environment variable: `MONGODB_URI` = your MongoDB Atlas connection string
+5. Click "Deploy"
+
+**Note**: Vercel serverless functions have limits - for production, consider Render or Railway.
+
+## Deploy Backend to Render
+
+1. Push to GitHub
+2. Create account at [render.com](https://render.com)
+3. Create a new "Web Service":
+   - Connect your GitHub repository
+   - Build command: `npm install`
+   - Start command: `cd server && npm start`
+4. Add environment variable: `MONGODB_URI` = your MongoDB Atlas connection string
+5. Create service
+
+## Deploy Frontend to GitHub Pages (Static Only)
+
+GitHub Pages only hosts static files (no Node.js backend):
+
+1. Go to repository Settings > Pages
+2. Select source: "main" branch
+3. Save
+
+**Note**: The "Add Project" button will only work in Demo Mode (localStorage) on GitHub Pages. For full functionality, use Vercel or Render.
+
+## MongoDB Atlas Setup
+
+1. Create free account at [cloud.mongodb.com](https://cloud.mongodb.com)
+2. Create a free cluster
+3. Create database user with password
+4. Add IP to allowlist (use `0.0.0.0/0` for any IP)
+5. Get connection string and add to `server/.env`
 
 ## Local Development
 
-You can view the site locally by simply opening `index.html` in your web browser.
-
-Alternatively, if you have Node.js installed, you can run a local server:
-
 ```bash
-npx serve .
+# Install dependencies
+npm install
+cd server && npm install
+
+# Start development server
+npm run dev
+
+# Or start production server
+cd server && npm start
 ```
 
-## Project Structure
+## API Endpoints
 
--   `index.html`: The main entry point.
--   `data/projects.json`: Contains the list of projects displayed on the site.
--   `css/`, `js/`, `images/`: Static assets.
+- `GET /api/projects` - Get all projects
+- `POST /api/projects` - Create a new project
+- `DELETE /api/projects/:id` - Delete a project
 
-## Database Setup (Optional)
+## Demo Mode
 
-This project uses **Firebase Firestore** for saving data.
-
-1.  Create a project at [Firebase Console](https://console.firebase.google.com/).
-2.  Create a **Firestore Database** in test mode.
-3.  Copy your web app configuration keys.
-4.  Open `js/firebase-config.js` and paste your keys.
-
-### Demo Mode
-If you don't set up Firebase, the site runs in **Demo Mode**.
--   Projects you create are saved to your **browser's local storage**.
--   They will persist on your device but won't be visible to others.
--   To share data with others, you must set up Firebase.
+If the backend is not running, the site falls back to Demo Mode using browser's local storage.

@@ -88,31 +88,6 @@
                         <button class="page-btn" id="nextPage">Next</button>
                     </div>
                 </div>
-                
-                <div id="quotes-grid" style="margin-top: 24px;">
-                    <div class="table-tools">
-                        <input type="text" id="quotesSearchInput" class="form-control" placeholder="Search quotes">
-                    </div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th data-qkey="id">ID</th>
-                                <th data-qkey="firstName">First Name</th>
-                                <th data-qkey="lastName">Last Name</th>
-                                <th data-qkey="email">Email</th>
-                                <th data-qkey="phoneNumber">Phone</th>
-                                <th data-qkey="message">Message</th>
-                                <th data-qkey="createdAt">Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody id="quotesTbody"></tbody>
-                    </table>
-                    <div class="datatable-pagination">
-                        <button class="page-btn" id="quotesPrevPage">Prev</button>
-                        <span id="quotesPageInfo"></span>
-                        <button class="page-btn" id="quotesNextPage">Next</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Right Sidebar -->
@@ -223,34 +198,24 @@
         
         // For debugging/setup: expose seedDatabase to console
         window.seedDatabase = async () => {
-            if(confirm('This will upload all projects from data/projects.json to your Firebase database. Continue?')) {
+            if(confirm('This will load all projects from data/projects.json to your browser storage. Continue?')) {
                 await seedDatabase();
                 fetchProjects(); // Refresh the table
             }
         };
 
         let projects = [];
-        const API_URL = 'data/projects.json';
         let page = 1;
         let pageSize = 10;
         let sortKey = 'title';
         let sortAsc = true;
         let searchTerm = '';
-        let quotes = [];
-        // const QUOTES_API = window.location.origin + '/quotes';
-        let qPage = 1;
-        let qPageSize = 10;
-        let qSortKey = 'createdAt';
-        let qSortAsc = false;
-        let qSearchTerm = '';
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing...');
             bindTableEvents();
             fetchProjects();
-            bindQuotesEvents();
-            fetchQuotes();
         });
         
         // Fallback initialization in case DOMContentLoaded already fired
@@ -259,15 +224,11 @@
                 console.log('DOM loaded (fallback), initializing...');
                 bindTableEvents();
                 fetchProjects();
-                bindQuotesEvents();
-                fetchQuotes();
             });
         } else {
             console.log('DOM already loaded, initializing immediately...');
             bindTableEvents();
             fetchProjects();
-            bindQuotesEvents();
-            fetchQuotes();
         }
 
         async function fetchProjects() {
@@ -315,9 +276,7 @@
                 try {
                     await dbDeleteProject(id.toString());
                     fetchProjects();
-                    if (!isFirebaseConfigured()) {
-                         alert("Demo Mode: Project deleted from local storage.");
-                    }
+                    alert("Project deleted from local storage.");
                 } catch (err) {
                     console.error('Error deleting project:', err);
                     alert('Error deleting project. Please try again.');
@@ -391,9 +350,7 @@
                 await dbCreateProject(project);
                 closeCreateModal();
                 fetchProjects();
-                if (!isFirebaseConfigured()) {
-                     alert("Demo Mode: Project saved to local storage.");
-                }
+                alert("Project saved to local storage!");
             } catch (err) {
                 console.error(err);
                 alert('Error creating project');
@@ -471,83 +428,6 @@
             
             const pageInfo = document.getElementById('pageInfo');
             pageInfo.textContent = items.length > 0 ? ('Page ' + page + ' of ' + totalPages) : '';
-        }
-        function fetchQuotes() {
-            // Static mode: No quotes available
-            quotes = [];
-            updateQuotesTable();
-        }
-        function bindQuotesEvents() {
-            const searchInput = document.getElementById('quotesSearchInput');
-            const prevBtn = document.getElementById('quotesPrevPage');
-            const nextBtn = document.getElementById('quotesNextPage');
-            searchInput.oninput = function(e) {
-                qSearchTerm = e.target.value.toLowerCase();
-                qPage = 1;
-                updateQuotesTable();
-            };
-            document.querySelectorAll('th[data-qkey]').forEach(function(th){
-                th.onclick = function(){
-                    const key = th.getAttribute('data-qkey');
-                    if (qSortKey === key) qSortAsc = !qSortAsc; else { qSortKey = key; qSortAsc = true; }
-                    updateQuotesTable();
-                };
-            });
-            prevBtn.onclick = function(){
-                if (qPage > 1) { qPage--; updateQuotesTable(); }
-            };
-            nextBtn.onclick = function(){
-                const total = Math.max(1, Math.ceil(getQuotesFiltered().length / qPageSize));
-                if (qPage < total) { qPage++; updateQuotesTable(); }
-            };
-        }
-        function getQuotesFiltered() {
-            return quotes.filter(function(q){
-                const f = (q.firstName || '').toLowerCase();
-                const l = (q.lastName || '').toLowerCase();
-                const e = (q.email || '').toLowerCase();
-                const p = (q.phoneNumber || '').toLowerCase();
-                const m = (q.message || '').toLowerCase();
-                const c = (q.createdAt || '').toString().toLowerCase();
-                return f.includes(qSearchTerm) || l.includes(qSearchTerm) || e.includes(qSearchTerm) || p.includes(qSearchTerm) || m.includes(qSearchTerm) || c.includes(qSearchTerm);
-            });
-        }
-        function formatDateText(s) {
-            if (!s) return '';
-            if (typeof s === 'string') return s.replace('T', ' ');
-            return s;
-        }
-        function updateQuotesTable() {
-            let items = getQuotesFiltered();
-            items.sort(function(a,b){
-                const ak = (a[qSortKey] || '').toString().toLowerCase();
-                const bk = (b[qSortKey] || '').toString().toLowerCase();
-                if (ak < bk) return qSortAsc ? -1 : 1;
-                if (ak > bk) return qSortAsc ? 1 : -1;
-                return 0;
-            });
-            const totalPages = Math.max(1, Math.ceil(items.length / qPageSize));
-            if (qPage > totalPages) qPage = totalPages;
-            const start = (qPage - 1) * qPageSize;
-            const pageItems = items.slice(start, start + qPageSize);
-            const tbody = document.getElementById('quotesTbody');
-            if (items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #888;">No quotes found.</td></tr>';
-            } else {
-                tbody.innerHTML = pageItems.map(function(q){
-                    return '<tr>'
-                        + '<td>' + (q.id || '') + '</td>'
-                        + '<td>' + (q.firstName || '') + '</td>'
-                        + '<td>' + (q.lastName || '') + '</td>'
-                        + '<td>' + (q.email || '') + '</td>'
-                        + '<td>' + (q.phoneNumber || '') + '</td>'
-                        + '<td>' + (q.message || '') + '</td>'
-                        + '<td>' + formatDateText(q.createdAt) + '</td>'
-                        + '</tr>';
-                }).join('');
-            }
-            const pageInfo = document.getElementById('quotesPageInfo');
-            pageInfo.textContent = items.length > 0 ? ('Page ' + qPage + ' of ' + totalPages) : '';
         }
         function showNotification(message) {
             alert(message);
